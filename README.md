@@ -16,14 +16,16 @@ Expected to be updated by the end of ICCV 2023.
 
 ## Reference
 If you use the code, please cite our paper: <br />
-``@InProceedings{Ding_2023_ICCV, \
-    author    = {Ding, Yaqing and Chien, Chiang-Heng and Larsson, Viktor and \r{A}str\"om, Karl and Kimia, Benjamin}, \
-    title     = {Minimal Solutions to Generalized Three-View Relative Pose Problem}, \
-    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, \
-    month     = {October}, \
-    year      = {2023}, \
+```
+@InProceedings{Ding_2023_ICCV,
+    author    = {Ding, Yaqing and Chien, Chiang-Heng and Larsson, Viktor and \r{A}str\"om, Karl and Kimia, Benjamin},
+    title     = {Minimal Solutions to Generalized Three-View Relative Pose Problem},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2023},
     pages     = {8156-8164}
-}``
+}
+```
 
 
 
