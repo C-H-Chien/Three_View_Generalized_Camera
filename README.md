@@ -3,7 +3,10 @@
 ## Introduction
 This repository provides the source code of the paper: <br />
 "Minimal Solutions to Generalized Three-View Relative Pose Problem" published in ICCV 2023. [[Paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Ding_Minimal_Solutions_to_Generalized_Three-View_Relative_Pose_Problem_ICCV_2023_paper.pdf)][[Supp](https://openaccess.thecvf.com/content/ICCV2023/supplemental/Ding_Minimal_Solutions_to_ICCV_2023_supplemental.pdf)] <br />
-Two minimal cases for the generalized three-view relative pose problem were proposed: *(i)* the 4-point case and *(ii)* the 6-line case, which are both solved by [GPU-HC](https://github.com/C-H-Chien/Homotopy-Continuation-Tracker-on-GPU). It has shown to be more robust than the generalized two-view relative pose (which requires 6 points for a minimal case), and are efficient, *e.g.*, ~7 (ms) forNVIDIA Titan V GPU. 
+Two minimal cases for the generalized three-view relative pose problem were proposed: *(i)* the 4-point case and *(ii)* the 6-line case, which are both solved by [GPU-HC](https://github.com/C-H-Chien/Homotopy-Continuation-Tracker-on-GPU). It has shown to be more robust than the generalized two-view relative pose (which requires 6 points for a minimal case), and are efficient, *e.g.*, ~7 (ms) for NVIDIA Titan V GPU. 
+
+## Change Logs
+[Oct. 10th, 2023] A synthetic data for the generalized three-view is provided by Yaqing.
 
 ## Dependencies
 (1) CMake 3.14 or higher <br />
@@ -13,7 +16,7 @@ Two minimal cases for the generalized three-view relative pose problem were prop
 (5) openBlas <br />
 
 ## Code Usage Instructions
-Expected to be updated by the end of ICCV 2023.
+Expected to be updated soon.
 
 ## Reference
 If you use the code, please cite our paper: <br />
