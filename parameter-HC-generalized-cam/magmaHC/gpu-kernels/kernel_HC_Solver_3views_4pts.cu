@@ -263,7 +263,6 @@ namespace magmaHCWrapper {
     }
 
     //> d_cgesvB tells whether the track is finished, if not, stores t0 and delta_t
-    //d_cgesvB[tx] = (t0 >= 1.0 || (1.0-t0 <= 0.0000001)) ? MAGMA_C_MAKE(1.0, hc_steps) : MAGMA_C_MAKE(t0, delta_t);
     d_cgesvB[tx] = (t0 >= 1.0 || (1.0-t0 <= 0.0000001)) ? MAGMA_C_MAKE(1.0, hc_steps) : MAGMA_C_MAKE(t0, delta_t);
 
     //> d_track stores the solutions
@@ -315,7 +314,8 @@ namespace magmaHCWrapper {
     //  <N, numOf_phc_coeffs, max_steps, max_corr_steps, successes_to_incremental_factor, Hx_max_terms, Hx_max_parts, Ht_max_terms, Ht_max_parts>
     e = cudaLaunchKernel((void*)homotopy_continuation_solver_3views_4pts
                          //< 12, 67, 200, 100, 5, 3, 3, 10, 4 >, 
-                         < 12, 67, 250, 2, 5, 3, 3, 10, 4 >, 
+                         // < 12, 67, 250, 2, 5, 3, 3, 10, 4 >, 
+                         < 12, 67, 200, 100, 5, 3, 3, 10, 4 >, 
                          grid, threads, kernel_args, shmem, my_queue->cuda_stream());
 
     gpu_time = magma_sync_wtime( my_queue ) - gpu_time;

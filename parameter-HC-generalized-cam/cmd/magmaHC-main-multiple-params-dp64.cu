@@ -9,8 +9,11 @@
 // main function
 //
 // Modifications
-//    Chiang-Heng Chien  23-02-26    Read Multiple Target Parameter Files and Solve (i) 3-Views With 
-//                                   4-Points Problem and (ii) Six Lines 6x6 Problem.
+//    Chien  23-02-26    Read Multiple Target Parameter Files and Solve (i) 3-Views With 
+//                       4-Points Problem and (ii) Six Lines 6x6 Problem.
+//    Chien  24-03-02    For 3-views 4-points problem, only 583 solutions are needed to find 
+//                       the actual solution of the problem. This is the same as stated in the paper.
+//                       The change is to remove reading 3072 solutions and read 583 solutions.
 //
 //> (c) LEMS, Brown University
 //> Chiang-Heng Chien (chiang-heng_chien@brown.edu)
@@ -100,13 +103,6 @@ int main(int argc, char **argv) {
   magma_imalloc_cpu( &h_Hx_idx, pp->numOfVars*pp->numOfVars*pp->Hx_maximal_terms*pp->Hx_maximal_parts );
   magma_imalloc_cpu( &h_Ht_idx, pp->numOfVars*pp->Ht_maximal_terms*pp->Ht_maximal_parts );
 
-  // ======================================================================================
-  //> read files: start solutions, start parameters. Read them once and for all.
-  //> Jan 20th, 2023 add: *start_sols.txt* and *start_params.txt* are the 3view_4pts 
-  //                      problem tracking only 583 solutions, while *start_sols_full.txt*
-  //                      and *start_params_full.txt* are the same problem tracking 3072 
-  //                      solutions.
-  // ======================================================================================
   std::string startParam_fileName = problem_filename;
   std::string startSols_filename_test = problem_filename;
   if (HC_problem == "3views_4pts")        { 

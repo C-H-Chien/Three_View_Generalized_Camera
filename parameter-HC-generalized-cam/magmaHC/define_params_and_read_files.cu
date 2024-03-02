@@ -1,13 +1,16 @@
 #ifndef define_params_and_read_files_cu
 #define define_params_and_read_files_cu
-// ==============================================================================
+// ==================================================================================================
 //
 // Modifications
-//    Chiang-Heng Chien  22-10-31:   Initially Created (Copied from other repos)
+//    Chien  22-10-31:   Initially Created (Copied from other repos)
+//    Chien  24-03-02:   For 3-views 4-points problem, only 583 solutions are needed to find 
+//                       the actual solution of the problem. This is the same as stated in the paper.
+//                       The change is to define numOfTracks as 583 for 3views_4pts problem.
 //
 //> (c) LEMS, Brown University
 //> Chiang-Heng Chien (chiang-heng_chien@brown.edu)
-// ==============================================================================
+// ===================================================================================================
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdio>
@@ -74,9 +77,7 @@ namespace magmaHCWrapper {
 
       //> problem specifications
       numOfParams = 45;
-      //numOfTracks = 583;
-      //numOfTracks = 584;
-      numOfTracks = 3072;
+      numOfTracks = 583;
       numOfVars = 12;
       numOfCoeffsFromParams = 66;
 
