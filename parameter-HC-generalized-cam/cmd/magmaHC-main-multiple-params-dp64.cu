@@ -106,8 +106,8 @@ int main(int argc, char **argv) {
   std::string startParam_fileName = problem_filename;
   std::string startSols_filename_test = problem_filename;
   if (HC_problem == "3views_4pts")        { 
-    startSols_filename_test.append("/start_sols_full.txt");
-    startParam_fileName.append("/start_params_full.txt");
+    startSols_filename_test.append("/start_sols.txt");
+    startParam_fileName.append("/start_params.txt");
   }
   else if (HC_problem == "six_lines_6x6") { 
     startSols_filename_test.append("/start_sols.txt");

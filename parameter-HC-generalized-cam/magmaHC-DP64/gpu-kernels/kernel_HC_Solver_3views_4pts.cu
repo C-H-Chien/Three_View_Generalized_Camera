@@ -315,7 +315,7 @@ namespace magmaHCWrapperDP64 {
     //  <N, numOf_phc_coeffs, max_steps, max_corr_steps, successes_to_incremental_factor, Hx_max_terms, Hx_max_parts, Ht_max_terms, Ht_max_parts>
     e = cudaLaunchKernel((void*)homotopy_continuation_solver_3views_4pts
                          //< 12, 67, 200, 100, 5, 3, 3, 10, 4 >,
-                         < 12, 67, 250, 2, 5, 3, 3, 10, 4 >, 
+                         < 12, 67, 250, 100, 5, 3, 3, 10, 4 >, 
                          grid, threads, kernel_args, shmem, my_queue->cuda_stream());
 
     gpu_time = magma_sync_wtime( my_queue ) - gpu_time;
