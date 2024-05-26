@@ -7,6 +7,8 @@ Two minimal cases for the generalized three-view relative pose problem were prop
 
 ## Change Logs
 [Oct. 10th, 2023] A synthetic data for the generalized three-view is provided by Yaqing.
+[Mar. 02nd, 2024] Fix the number of solutions issue for the 3-view 4-points case. The tested GPU time is consistent with what was reported in the paper.
+[May. 22nd, 2024] Fix the issue from the power term for parameters in the automated data reformator. This does not affect the three-view generalized problem, but could raise a bug for new minimal problems.
 
 ## Dependencies
 (1) CMake 3.14 or higher <br />
