@@ -6,9 +6,9 @@ This repository provides the source code of the paper: <br />
 Two minimal cases for the generalized three-view relative pose problem were proposed: *(i)* the 4-point case and *(ii)* the 6-line case, which are both solved by [GPU-HC](https://github.com/C-H-Chien/Homotopy-Continuation-Tracker-on-GPU). It has shown to be more robust than the generalized two-view relative pose (which requires 6 points for a minimal case), and are efficient, *e.g.*, ~7 (ms) for NVIDIA Titan V GPU. 
 
 ## Change Logs
-[Oct. 10th, 2023] A synthetic data for the generalized three-view is provided by Yaqing.
-[Mar. 02nd, 2024] Fix the number of solutions issue for the 3-view 4-points case. The tested GPU time is consistent with what was reported in the paper.
-[May. 22nd, 2024] Fix the issue from the power term for parameters in the automated data reformator. This does not affect the three-view generalized problem, but could raise a bug for new minimal problems.
+[Oct. 10th, 2023] A synthetic data for the generalized three-view is provided by Yaqing. <br />
+[Mar. 02nd, 2024] Fix the number of solutions issue for the 3-view 4-points case. The tested GPU time is consistent with what was reported in the paper. <br />
+[May. 22nd, 2024] Fix the issue from the power term for parameters in the automated data reformator. This does not affect the three-view generalized problem, but could raise a bug for new minimal problems. <br />
 
 ## Dependencies
 (1) CMake 3.14 or higher <br />
