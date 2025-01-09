@@ -1,0 +1,28 @@
+%YAML:1.0
+
+#> Problem Name (must be the same as the problem folder name)
+problem_name: generalized_3views_6lines_6x6
+problem_print_out_name: Generalized Three-View Relative Pose Problem using 6 Lines (6x6 formulation)
+
+#> Reference: Ding, Yaqing, Chiang-Heng Chien, Viktor Larsson, Karl Åström, and Benjamin Kimia. 
+#  "Minimal Solutions to Generalized Three-View Relative Pose Problem." 
+#  In Proceedings of the IEEE/CVF International Conference on Computer Vision, pp. 8156-8164. 2023.
+
+#> GPU-HC Settings
+GPUHC_Max_Steps: 100
+GPUHC_Max_Correction_Steps: 2
+GPUHC_Num_Of_Steps_to_Increase_Delta_t: 2
+
+#> Problem spec
+Num_Of_Vars: 6
+Num_Of_Params: 36
+Num_Of_Tracks: 600
+dHdx_Max_Terms: 40
+dHdx_Max_Parts: 5
+dHdt_Max_Terms: 100
+dHdt_Max_Parts: 6
+Max_Order_Of_T: 3
+Num_Of_Coeffs_From_Params: 563
+
+#> RANSAC data
+RANSAC_Dataset: None
