@@ -67,6 +67,6 @@
 #define LOG_PRINT_HELP_MESSAGE          printf("Usage: ./magmaHC-main [options] [path]\n\n" \
                                                "options:\n" \
                                                "  -h, --help        show this help message and exit\n" \
-                                               "  -d, --directory   repository directory, e.g. /home/chchien/Homotopy-Continuation-Tracker-on-GPU/GPU-HC/\n");
+                                               "  -p, --directory   problem name, e.g. generalized_3views_4pts\n");
 
 
