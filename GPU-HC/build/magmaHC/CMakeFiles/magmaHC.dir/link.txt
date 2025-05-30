@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libmagmaHC.a CMakeFiles/magmaHC.dir/GPU_HC_Solver.cpp.o CMakeFiles/magmaHC.dir/Data_Reader.cpp.o CMakeFiles/magmaHC.dir/Evaluations.cpp.o "CMakeFiles/magmaHC.dir/gpu-kernels/kernel_HC_Solver_generalized_3views_4pts.cu.o" "CMakeFiles/magmaHC.dir/gpu-kernels/kernel_HC_Solver_generalized_3views_6lines.cu.o"
+/usr/bin/ranlib ../lib/libmagmaHC.a
