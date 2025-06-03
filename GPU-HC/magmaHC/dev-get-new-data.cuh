@@ -15,8 +15,6 @@
 #include <iomanip>
 #include <cstring>
 
-#include <cuda_runtime.h>
-
 #include "magma_v2.h"
 #include "magma_lapack.h"
 #include "magma_internal.h"
@@ -35,8 +33,8 @@
 
 __device__ __inline__ void
 create_x_for_k2(
-  const int tx, float &t, float delta_t, float one_half_delta_t, magmaFloatComplex *s_sols,
-  magmaFloatComplex *s_track, magmaFloatComplex *sB, magmaFloatComplex gc )
+  const int tx, FP_type &t, FP_type delta_t, FP_type one_half_delta_t, magmaComplex *s_sols,
+  magmaComplex *s_track, magmaComplex *sB, magmaComplex gc )
 {
   s_sols[tx] += sB[tx] * delta_t * gc * 1.0/6.0;     // -- s = s + (\Delta t) (k1/6) --
   sB[tx] *= one_half_delta_t * gc;                   // -- k1 * (\Delta t)/2 --
@@ -46,9 +44,9 @@ create_x_for_k2(
 
 __device__ __inline__ void
 create_x_for_k3(
-  const int tx, float delta_t, float one_half_delta_t, magmaFloatComplex *s_sols, \
-  magmaFloatComplex *s_track, magmaFloatComplex *s_track_pred_init, magmaFloatComplex *sB, \
-  magmaFloatComplex gc05 )
+  const int tx, FP_type delta_t, FP_type one_half_delta_t, magmaComplex *s_sols, \
+  magmaComplex *s_track, magmaComplex *s_track_pred_init, magmaComplex *sB, \
+  magmaComplex gc05 )
 {
   s_sols[tx] += sB[tx] * delta_t * gc05 * 1.0/3.0;     // -- s = s + (\Delta t) (k1/6 + k2/3) --
   s_track[tx] = s_track_pred_init[tx];          // -- copy the initial prior prediction solution --
@@ -58,9 +56,9 @@ create_x_for_k3(
 
 __device__ __inline__ void
 create_x_for_k4(
-  const int tx, float &t, float delta_t, float one_half_delta_t, magmaFloatComplex *s_sols,
-  magmaFloatComplex *s_track, magmaFloatComplex *s_track_pred_init, magmaFloatComplex *sB, \
-  magmaFloatComplex gc05 )
+  const int tx, FP_type &t, FP_type delta_t, FP_type one_half_delta_t, magmaComplex *s_sols,
+  magmaComplex *s_track, magmaComplex *s_track_pred_init, magmaComplex *sB, \
+  magmaComplex gc05 )
 {
   s_sols[tx] += sB[tx] * delta_t * gc05 * 1.0/3.0;     // -- s = s + (\Delta t) (k1/6 + k2/3 + k3/3) --
   s_track[tx] = s_track_pred_init[tx];          // -- copy the initial prior prediction solution --
@@ -72,7 +70,7 @@ create_x_for_k4(
 
 // __device__ __inline__ void
 // compute_norm2(
-//   const int tx, magmaFloatComplex *sB, magmaFloatComplex *s_track,
+//   const int tx, magmaComplex *sB, magmaComplex *s_track,
 //   float *s_sqrt_sols, float *s_sqrt_corr, float* s_norm)
 // {
 //   s_sqrt_sols[tx] = MAGMA_C_REAL(sB[tx])*MAGMA_C_REAL(sB[tx]) + MAGMA_C_IMAG(sB[tx])*MAGMA_C_IMAG(sB[tx]);

@@ -1,7 +1,7 @@
-#ifndef magmaHC_kernels_h
-#define magmaHC_kernels_h
+#ifndef GPU_HC_SOLVER_HPP
+#define GPU_HC_SOLVER_HPP
 // ============================================================================
-// Header file declaring all kernels
+// GPU-HC solver class definition
 //
 // Modifications
 //    Chiang-Heng Chien  24-05-23:      Shifted from icl branch
@@ -20,12 +20,19 @@
 
 #include "magma_v2.h"
 #include "gpu-kernels/magmaHC-kernels.hpp"
+#include "typenames.hpp"
 #include "Data_Reader.hpp"
 #include "Evaluations.hpp"
 #include <yaml-cpp/yaml.h>
 
 class Data_Reader;
 class Evaluations;
+
+// template<typename magma_T>
+// struct MAGMA_TypeName {
+//     typedef typename std::conditional< std::is_same<magma_T, float>::value, magmaFloatComplex, magmaDoubleComplex>::type magmaComplex;
+//     typedef typename std::conditional< std::is_same<magma_T, float>::value, magmaFloatComplex_ptr, magmaDoubleComplex_ptr>::type magmaComplex_ptr;
+// };
 
 class GPU_HC_Solver {
     
@@ -41,17 +48,17 @@ class GPU_HC_Solver {
     magma_int_t             ldd_phc_Params_Ht;
 
     //> Variables and arrays on the CPU side
-    magmaFloatComplex       *h_GPU_HC_Track_Sols;
-    magmaFloatComplex       *h_diffParams;
-    magmaFloatComplex       *h_Start_Sols;
-    magmaFloatComplex       *h_Homotopy_Sols;
-    magmaFloatComplex       *h_Start_Params;
-    magmaFloatComplex       *h_Target_Params;
-    magmaFloatComplex       *h_dHdx_PHC_Coeffs;
-    magmaFloatComplex       *h_dHdt_PHC_Coeffs;
+    magmaComplex            *h_GPU_HC_Track_Sols;
+    magmaComplex            *h_diffParams;
+    magmaComplex            *h_Start_Sols;
+    magmaComplex            *h_Homotopy_Sols;
+    magmaComplex            *h_Start_Params;
+    magmaComplex            *h_Target_Params;
+    magmaComplex            *h_dHdx_PHC_Coeffs;
+    magmaComplex            *h_dHdt_PHC_Coeffs;
     int                     *h_dHdx_Index;
     int                     *h_dHdt_Index;
-    magmaFloatComplex       *h_Debug_Purpose;
+    magmaComplex            *h_Debug_Purpose;
     bool                    *h_is_GPU_HC_Sol_Converge;
     bool                    *h_is_GPU_HC_Sol_Infinity;
     float                   h_Camera_Intrinsic_Matrix[9];
@@ -59,16 +66,16 @@ class GPU_HC_Solver {
     float                   h_Camera_Pose31[12];
 
     //> Variables and arrays on the GPU side
-    magmaFloatComplex_ptr   d_Start_Sols, d_Homotopy_Sols;
-    magmaFloatComplex_ptr   d_Start_Params, d_Target_Params;
-    magmaFloatComplex_ptr   d_dHdx_PHC_Coeffs;
-    magmaFloatComplex_ptr   d_dHdt_PHC_Coeffs;
+    magmaComplex_ptr        d_Start_Sols, d_Homotopy_Sols;
+    magmaComplex_ptr        d_Start_Params, d_Target_Params;
+    magmaComplex_ptr        d_dHdx_PHC_Coeffs;
+    magmaComplex_ptr        d_dHdt_PHC_Coeffs;
     int                     *d_dHdx_Index;
     int                     *d_dHdt_Index;
-    magmaFloatComplex       **d_Start_Sols_array;
-    magmaFloatComplex       **d_Homotopy_Sols_array;
-    magmaFloatComplex       *d_diffParams;
-    magmaFloatComplex       *d_Debug_Purpose;
+    magmaComplex            **d_Start_Sols_array;
+    magmaComplex            **d_Homotopy_Sols_array;
+    magmaComplex            *d_diffParams;
+    magmaComplex            *d_Debug_Purpose;
     bool                    *d_is_GPU_HC_Sol_Converge;
     bool                    *d_is_GPU_HC_Sol_Infinity;
 
@@ -123,6 +130,28 @@ private:
     //> RANSAC data
     int Num_Of_Coeffs_From_Params;
     std::vector<int> GPUHC_Actual_Sols_Steps_Collections;
+
+    // //> Handling the typenames
+    // bool is_float;
+
+    // //> May not in use
+    // bool check_data_type() {
+    //     if (std::is_floating_point<T>::value) {
+    //         if (std::is_same<T, float>::value) {
+    //             is_float = true;
+    //             return true;
+    //         } else if (std::is_same<T, double>::value) {
+    //             is_float = false;
+    //             return true;
+    //         } else {
+    //             LOG_ERROR("Type in typename is a floating-point type but not float or double. Please use float or double.");
+    //             return false;
+    //         }
+    //     } else {
+    //         LOG_ERROR("Type in typename is not a floating-point type");
+    //         return false;
+    //     }
+    // }
 };
 
 #endif

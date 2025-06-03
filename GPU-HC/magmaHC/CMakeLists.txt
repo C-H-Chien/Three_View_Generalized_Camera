@@ -28,7 +28,8 @@ set (control_sources
   PHC_Coeffs/p2c-generalized_3views_4pts.h
   PHC_Coeffs/p2c-numerical_generalized_3views_6lines.h
 
-  #> Utilities
+  #> Others
+  typenames.hpp
   util.hpp
 )
 

@@ -64,7 +64,7 @@ void Evaluations::Flush_Out_Data() {
 }
 
 void Evaluations::Write_Converged_Sols( \
-    magmaFloatComplex *h_GPU_HC_Track_Sols, \
+    magmaComplex *h_GPU_HC_Track_Sols, \
     bool *h_is_GPU_HC_Sol_Converge ) 
 {
   for (int ri = 0; ri < NUM_OF_RANSAC_ITERATIONS; ri++) {
@@ -75,8 +75,8 @@ void Evaluations::Write_Converged_Sols( \
       if (h_is_GPU_HC_Sol_Converge[ bs ] == 1) {
         //GPUHC_Track_Sols_File << h_is_GPU_HC_Sol_Converge[ bs ] << "\n";
         for (int vs = 0; vs < num_of_variables; vs++) {
-          GPUHC_Track_Sols_File << std::setprecision(20) << MAGMA_C_REAL((h_GPU_HC_Track_Sols + ri * num_of_tracks * (num_of_variables+1) + bs * (num_of_variables+1))[vs]) << "\t" \
-                                << std::setprecision(20) << MAGMA_C_IMAG((h_GPU_HC_Track_Sols + ri * num_of_tracks * (num_of_variables+1) + bs * (num_of_variables+1))[vs]) << "\n";
+          GPUHC_Track_Sols_File << std::setprecision(20) << MAGMA_COMPLEX_REAL((h_GPU_HC_Track_Sols + ri * num_of_tracks * (num_of_variables+1) + bs * (num_of_variables+1))[vs]) << "\t" \
+                                << std::setprecision(20) << MAGMA_COMPLEX_IMAG((h_GPU_HC_Track_Sols + ri * num_of_tracks * (num_of_variables+1) + bs * (num_of_variables+1))[vs]) << "\n";
         }
         GPUHC_Track_Sols_File << "\n";
       }
@@ -86,7 +86,7 @@ void Evaluations::Write_Converged_Sols( \
 }
 
 void Evaluations::Evaluate_GPUHC_Sols( \
-    magmaFloatComplex *h_GPU_HC_Track_Sols, \
+    magmaComplex *h_GPU_HC_Track_Sols, \
     bool *h_is_GPU_HC_Sol_Converge, \
     bool *h_is_GPU_HC_Sol_Infinity, \
     int ransac_sample_offset ) 
@@ -99,7 +99,7 @@ void Evaluations::Evaluate_GPUHC_Sols( \
     int Num_Of_Real_Vars = 0;
     if ((h_is_GPU_HC_Sol_Converge + num_of_tracks * ransac_sample_offset)[ bs ] == 1) {
       for (int vs = 0; vs < num_of_variables; vs++) {
-        if (fabs(MAGMA_C_IMAG((h_GPU_HC_Track_Sols + num_of_tracks * (num_of_variables+1) * ransac_sample_offset + bs * (num_of_variables+1))[vs])) <= ZERO_IMAG_PART_TOL_FOR_SP) {
+        if (fabs(MAGMA_COMPLEX_IMAG((h_GPU_HC_Track_Sols + num_of_tracks * (num_of_variables+1) * ransac_sample_offset + bs * (num_of_variables+1))[vs])) <= ZERO_IMAG_PART_TOL) {
             Num_Of_Real_Vars++;
         }
       }
@@ -110,7 +110,7 @@ void Evaluations::Evaluate_GPUHC_Sols( \
 }
 
 void Evaluations::Evaluate_RANSAC_GPUHC_Sols( \
-    magmaFloatComplex *h_GPU_HC_Track_Sols, \
+    magmaComplex *h_GPU_HC_Track_Sols, \
     bool *h_is_GPU_HC_Sol_Converge, \
     bool *h_is_GPU_HC_Sol_Infinity )
 {
@@ -124,7 +124,7 @@ void Evaluations::Evaluate_RANSAC_GPUHC_Sols( \
   Percentage_Of_Real_Sols   = (float)Num_Of_Real_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
 }
 
-void Evaluations::Find_Unique_Sols( magmaFloatComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge ) {
+void Evaluations::Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge ) {
 
   std::set< int > Duplicate_Sol_Index;
   std::set< int > Skip_Sol_Index;
