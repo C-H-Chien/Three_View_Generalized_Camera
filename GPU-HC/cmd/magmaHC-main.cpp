@@ -10,13 +10,7 @@
 // main function
 //
 // Modifications
-//    Chien  21-12-29    Initially created a parametric HC for a General Computer Vision Problems
-//    Chien  22-11-14    Add geometric form of 5pt relative pose problem
-//    Chien  22-11-16    Add algebraic form of 5pt relative pose problem
-//    Chien  23-10-20    Add gamma trick and trifocal relative pose from lines at points problem
-//    Chien  23-12-27    Add definitions.hpp placing all Macros
-//    Chien  24-02-26    Shift most of the code to GPU_HC_Solver class. Make main code clean.
-//    Chien  24-03-26    Use yaml-cpp to parse data from problem yaml files so that no recompilation is needed when switching problems
+//    Chien  25-05-28    Migrate from the original GPU-HC code for better code organization
 //
 //> (c) LEMS, Brown University
 //> Chiang-Heng Chien (chiang-heng_chien@brown.edu)
