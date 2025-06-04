@@ -58,7 +58,7 @@ bool Data_Reader::Read_Start_Sols(magmaComplex* &h_Start_Sols, magmaComplex* &h_
         return false;
     }
     else {
-        float s_real, s_imag;
+        FP_type s_real, s_imag;
         int d = 0, i = 0; 
         while (File_Start_Sols >> s_real >> s_imag) {
             (h_Start_Sols + i * (num_of_variables+1))[d]     = MAGMA_MAKE_COMPLEX(s_real, s_imag);
@@ -105,12 +105,12 @@ bool Data_Reader::Read_Target_Params(magmaComplex* &h_Target_Params) {
         return false;
     }
     else {
-        float s_real, s_imag;
+        FP_type s_real, s_imag;
         while (File_Target_Params >> s_real >> s_imag) {
             h_Target_Params[d] = MAGMA_MAKE_COMPLEX(s_real, s_imag);
             d++;
         }
-        h_Target_Params[num_of_params] = MAGMA_C_ONE;
+        h_Target_Params[num_of_params] = MAGMA_COMPLEX_ONE;
     }
 
     // std::cout << "Target parameters:" << std::endl;
@@ -129,12 +129,12 @@ bool Data_Reader::Read_Start_Params(magmaComplex* &h_Start_Params) {
         return false;
     }
     else {
-        float s_real, s_imag;
+        FP_type s_real, s_imag;
         while (File_Start_Params >> s_real >> s_imag) {
             h_Start_Params[d] = MAGMA_MAKE_COMPLEX(s_real, s_imag);
             d++;
         }
-        h_Start_Params[num_of_params] = MAGMA_C_ONE;
+        h_Start_Params[num_of_params] = MAGMA_COMPLEX_ONE;
     }
 
     // std::cout << "Start parameters:" << std::endl;

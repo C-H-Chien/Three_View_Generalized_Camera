@@ -61,9 +61,9 @@ class GPU_HC_Solver {
     magmaComplex            *h_Debug_Purpose;
     bool                    *h_is_GPU_HC_Sol_Converge;
     bool                    *h_is_GPU_HC_Sol_Infinity;
-    float                   h_Camera_Intrinsic_Matrix[9];
-    float                   h_Camera_Pose21[12];
-    float                   h_Camera_Pose31[12];
+    FP_type                  h_Camera_Intrinsic_Matrix[9];
+    FP_type                  h_Camera_Pose21[12];
+    FP_type                  h_Camera_Pose31[12];
 
     //> Variables and arrays on the GPU side
     magmaComplex_ptr        d_Start_Sols, d_Homotopy_Sols;

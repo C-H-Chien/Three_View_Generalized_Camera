@@ -40,7 +40,7 @@
 		const int tx,
 		magmaComplex rA[N], int* sipiv,
 		magmaComplex &rB, magmaComplex *sB,
-		magmaComplex *sx, float *dsx,
+		magmaComplex *sx, FP_type *dsx,
 		int rowid, magma_int_t &linfo )
 	{
 		magmaComplex reg    = MAGMA_COMPLEX_ZERO;

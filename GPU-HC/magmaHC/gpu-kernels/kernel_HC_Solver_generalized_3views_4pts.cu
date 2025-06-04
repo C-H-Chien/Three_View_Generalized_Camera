@@ -39,7 +39,6 @@
 //> device functions
 #include "../gpu-idx-evals/dev-eval-indxing-generalized_3views_4pts.cuh"
 #include "../dev-cgesv-batched-small.cuh"
-#include "../dev-get-new-data.cuh"
 
 template< int Num_Of_Vars, int Num_of_Coeffs_from_Params, int Max_Order_of_t, \
           int dHdx_Max_Terms, int dHdx_Max_Parts, int dHdx_Entry_Offset, int dHdx_Row_Offset, \
@@ -60,7 +59,6 @@ HC_solver_generalized_3views_4pts(
   magmaComplex* d_Debug_Purpose
 )
 {
-  extern __shared__ magmaComplex zdata[];
   const int tx = threadIdx.x;
   const int batchid = blockIdx.x ;
 
@@ -78,7 +76,9 @@ HC_solver_generalized_3views_4pts(
   FP_type t0 = 0.0, t_step = 0.0, delta_t = 0.05;
   bool end_zone = 0;
 
-  //> shared memory declarations
+//> shared memory declarations
+#if USE_SINGLE_PRECISION
+  extern __shared__ magmaComplex zdata[];
   magmaComplex *s_sols               = (magmaComplex*)(zdata);
   magmaComplex *s_track              = s_sols                   + (Num_Of_Vars+1);
   magmaComplex *s_track_last_success = s_track                  + (Num_Of_Vars+1);
@@ -86,11 +86,25 @@ HC_solver_generalized_3views_4pts(
   magmaComplex *sx                   = sB                       + Num_Of_Vars;
   magmaComplex *s_phc_coeffs_Hx      = sx                       + Num_Of_Vars;
   magmaComplex *s_phc_coeffs_Ht      = s_phc_coeffs_Hx          + (Num_of_Coeffs_from_Params+1);
-  FP_type* dsx                              = (FP_type*)(s_phc_coeffs_Ht + (Num_of_Coeffs_from_Params+1));
-  int* sipiv                              = (int*)(dsx               + Num_Of_Vars);
-#if USE_LOOPY_RUNGE_KUTTA
-  FP_type* s_delta_t_scale                  = (FP_type*)(sipiv           + (Num_Of_Vars+1));
-  int* s_RK_Coeffs                        = (int*)(s_delta_t_scale   + 1);
+  FP_type* dsx                       = (FP_type*)(s_phc_coeffs_Ht + (Num_of_Coeffs_from_Params+1));
+  int* sipiv                         = (int*)(dsx               + Num_Of_Vars);
+  FP_type* s_delta_t_scale           = (FP_type*)(sipiv         + (Num_Of_Vars+1));
+  int* s_RK_Coeffs                   = (int*)(s_delta_t_scale   + 1);
+#else
+  //> make sure that the memory address is well-aligned when using double precision
+  extern __shared__ char shared_mem[];
+  SHARED_ALLOC_INIT(shared_mem);  // set up internal pointer
+  SHARED_ALLOC(magmaComplex, s_sols,  Num_Of_Vars+1);
+  SHARED_ALLOC(magmaComplex, s_track, Num_Of_Vars+1);
+  SHARED_ALLOC(magmaComplex, s_track_last_success, Num_Of_Vars+1);
+  SHARED_ALLOC(magmaComplex, sB, Num_Of_Vars);
+  SHARED_ALLOC(magmaComplex, sx, Num_Of_Vars);
+  SHARED_ALLOC(magmaComplex, s_phc_coeffs_Hx, Num_of_Coeffs_from_Params+1);
+  SHARED_ALLOC(magmaComplex, s_phc_coeffs_Ht, Num_of_Coeffs_from_Params+1);
+  SHARED_ALLOC(FP_type, dsx, Num_Of_Vars);
+  SHARED_ALLOC(int, sipiv, Num_Of_Vars+1);
+  SHARED_ALLOC(FP_type, s_delta_t_scale, 1);
+  SHARED_ALLOC(int, s_RK_Coeffs, 1); 
 #endif
 
   s_sols[tx] = d_startSols[tx];
@@ -310,18 +324,46 @@ kernel_HC_Solver_generalized_3views_4pts(
 
   //> declare shared memory
   magma_int_t shmem  = 0;
-  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // startSols
-  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // track
-  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // track_pred_init
-  shmem += (num_of_coeffs_from_params+1) * sizeof(magmaComplex);   // s_phc_coeffs_Hx
-  shmem += (num_of_coeffs_from_params+1) * sizeof(magmaComplex);   // s_phc_coeffs_Ht
+#if USE_SINGLE_PRECISION
+  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // s_sols
+  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // s_track
+  shmem += (num_of_vars+1)               * sizeof(magmaComplex);   // s_track_last_success
   shmem += num_of_vars                   * sizeof(magmaComplex);   // sB
   shmem += num_of_vars                   * sizeof(magmaComplex);   // sx
+  shmem += (num_of_coeffs_from_params+1) * sizeof(magmaComplex);   // s_phc_coeffs_Hx
+  shmem += (num_of_coeffs_from_params+1) * sizeof(magmaComplex);   // s_phc_coeffs_Ht
+  
   shmem += num_of_vars                   * sizeof(FP_type);               // dsx
-  shmem += num_of_vars                   * sizeof(int);                 // pivot
-  shmem += 1 * sizeof(int);                                             // predictor_success counter
-  shmem += 1 * sizeof(int);                                             // Loopy Runge-Kutta coefficients
-  shmem += 1 * sizeof(FP_type);                                           // Loopy Runge-Kutta delta t
+  shmem += (num_of_vars+1)               * sizeof(int);                 // pivot
+  shmem += 1 * sizeof(FP_type);                                           // s_delta_t_scale
+  shmem += 1 * sizeof(int);                                             // s_RK_Coeffs
+#else
+  auto align = [](size_t offset, size_t alignment) {
+    return (offset + alignment - 1) & ~(alignment - 1);
+  };
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_vars+1);  // s_sols
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_vars+1);  // s_track
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_vars+1);  // s_track_last_success
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_vars);
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_vars);
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_coeffs_from_params+1);
+  shmem = align(shmem, alignof(magmaComplex));
+  shmem += sizeof(magmaComplex) * (num_of_coeffs_from_params+1);
+  shmem = align(shmem, alignof(FP_type));
+  shmem += sizeof(FP_type) * num_of_vars;
+  shmem = align(shmem, alignof(FP_type));
+  shmem += sizeof(FP_type) * 1;
+  shmem = align(shmem, alignof(int));
+  shmem += sizeof(int) * (num_of_vars+1);
+  shmem = align(shmem, alignof(int));
+  shmem += sizeof(int) * 1;
+#endif  
 
   //> Get max. dynamic shared memory on the GPU
   int nthreads_max, shmem_max = 0;

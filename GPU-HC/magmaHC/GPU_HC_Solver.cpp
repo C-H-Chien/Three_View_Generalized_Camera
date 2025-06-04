@@ -166,7 +166,7 @@ void GPU_HC_Solver::Allocate_Arrays() {
     cudacheck( cudaMalloc( &d_dHdt_Index,       dHdt_Index_Size *sizeof(int)) );
 
     magma_malloc( (void**) &d_Start_Sols_array,     (Num_Of_Tracks)                              * sizeof(magmaComplex*) );
-    magma_malloc( (void**) &d_Homotopy_Sols_array,  (Num_Of_Tracks+1)*(NUM_OF_RANSAC_ITERATIONS) * sizeof(magmaComplex*) );
+    magma_malloc( (void**) &d_Homotopy_Sols_array,  (Num_Of_Tracks)*(NUM_OF_RANSAC_ITERATIONS) * sizeof(magmaComplex*) );
 
     cudacheck( cudaMalloc( &d_is_GPU_HC_Sol_Converge, (Num_Of_Tracks*NUM_OF_RANSAC_ITERATIONS) * sizeof(bool) ));
     cudacheck( cudaMalloc( &d_is_GPU_HC_Sol_Infinity, (Num_Of_Tracks*NUM_OF_RANSAC_ITERATIONS) * sizeof(bool) ));
