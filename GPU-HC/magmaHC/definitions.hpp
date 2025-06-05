@@ -2,7 +2,6 @@
 //> Macros definitions
 //> ======================================================
 
-#define USE_LOOPY_RUNGE_KUTTA                   (true)
 
 #define WRITE_FILES_FOLDER                      std::string("Output_Write_Files/")
 
@@ -15,25 +14,34 @@
 #define REPROJ_ERROR_INLIER_THRESH              (2) //> in pixels
 
 //> Settings for GPU-HC Kernel
-#define APPLY_GAMMA_TRICK                       (false)
-#define USE_DOUBLE_PRECISION                    (false)
-#define USE_DEPTH_TO_TRUNCATE_PATH              (false)
-#define TRUNCATE_HC_PATH_THRESH                 (0.95)
+#define USE_SINGLE_PRECISION                    (false)
 
 //> Evaluation macros
 #define DUPLICATE_SOL_DIFF_TOL                  (1e-4)
-#define ZERO_IMAG_PART_TOL_FOR_SP               (1e-4)
-#define ZERO_IMAG_PART_TOL_FOR_DP               (1e-8)
 #define DEBUG_EVALUATOR                         (false)
 #define IS_SO3_DET_R_TOL                        (1e-5)
 
-//> Define a random complex numbner gamma used in the gamma-trick
-#if USE_DOUBLE_PRECISION
-    #define GAMMA                               MAGMA_Z_MAKE(0.707213579, 0.707213579)
-    #define GAMMA_MINUS_ONE                     MAGMA_Z_MAKE(-0.292786421, 0.707213579)
+//> Define universal MACROS for both single and double precision
+#if USE_SINGLE_PRECISION
+    #define MAGMA_MAKE_COMPLEX(r,i)             MAGMA_C_MAKE(r,i)
+    #define MAGMA_COMPLEX_ZERO                  MAGMA_C_ZERO
+    #define MAGMA_COMPLEX_ONE                   MAGMA_C_ONE
+    #define MAGMA_COMPLEX_DIV(a,b)              MAGMA_C_DIV(a,b)
+    #define MAGMA_COMPLEX_REAL(r)               MAGMA_C_REAL(r)
+    #define MAGMA_COMPLEX_IMAG(i)               MAGMA_C_IMAG(i)
+    #define MAGMA_NUM_ZERO                      (0.0)
+    #define MAGMA_NUM_ONE                       (1.0)
+    #define ZERO_IMAG_PART_TOL                  (1e-4)              //> Used for evaluation: finding real solutions
 #else
-    #define GAMMA                               MAGMA_C_MAKE(0.707213579, 0.707213579)
-    #define GAMMA_MINUS_ONE                     MAGMA_C_MAKE(-0.292786421, 0.707213579)
+    #define MAGMA_MAKE_COMPLEX(r,i)             MAGMA_Z_MAKE(r,i)
+    #define MAGMA_COMPLEX_ZERO                  MAGMA_Z_ZERO
+    #define MAGMA_COMPLEX_ONE                   MAGMA_Z_ONE
+    #define MAGMA_COMPLEX_DIV(a,b)              MAGMA_Z_DIV(a,b)
+    #define MAGMA_COMPLEX_REAL(r)               MAGMA_Z_REAL(r)
+    #define MAGMA_COMPLEX_IMAG(i)               MAGMA_Z_IMAG(i)
+    #define MAGMA_NUM_ZERO                      (0.0)
+    #define MAGMA_NUM_ONE                       (1.0)
+    #define ZERO_IMAG_PART_TOL                  (1e-8)              //> Used for evaluation: finding real solutions
 #endif
 
 //> Settings for Debugging
@@ -41,6 +49,14 @@
 #define GPU_DEBUG                               (true)
 #define DATA_READER_DEBUG                       (false)
 #define RANSAC_DEBUG                            (false)
+
+#define SHARED_ALLOC_INIT(ptr) \
+    char* __shared_alloc_ptr = (char*)(ptr);
+
+#define SHARED_ALLOC(type, name, count) \
+    __shared_alloc_ptr = (char*)(((uintptr_t)__shared_alloc_ptr + alignof(type) - 1) & ~(alignof(type) - 1)); \
+    type* name = (type*)__shared_alloc_ptr; \
+    __shared_alloc_ptr += sizeof(type) * (count);
 
 //> [DO NOT CHANGE] The following macros are constant. They are used for shuffle operation in a warp level.
 #define FULL_MASK                               (0xffffffff)

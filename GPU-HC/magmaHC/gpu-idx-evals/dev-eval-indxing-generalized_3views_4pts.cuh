@@ -28,6 +28,7 @@
 #undef min
 #include "batched_kernel_param.h"
 
+#include "../typenames.hpp"
 #include "../definitions.hpp"
 
 //> Compute the linear interpolations of parameters of phc
@@ -36,11 +37,11 @@ template< int Num_Of_Vars, int Max_Order_of_t, unsigned Full_Parallel_Offset, \
           unsigned Max_Order_of_t_Plus_One, unsigned Partial_Parallel_Index_Offset_Hx, unsigned Partial_Parallel_Index_Offset_Ht >
 __device__ __inline__ void
 eval_parameter_homotopy(
-    const int tx, float t, 
-    magmaFloatComplex *s_phc_coeffs_Hx,
-    magmaFloatComplex *s_phc_coeffs_Ht,
-    const magmaFloatComplex __restrict__ *d_phc_coeffs_Hx,
-    const magmaFloatComplex __restrict__ *d_phc_coeffs_Ht )
+    const int tx, FP_type t, 
+    magmaComplex *s_phc_coeffs_Hx,
+    magmaComplex *s_phc_coeffs_Ht,
+    const magmaComplex __restrict__ *d_phc_coeffs_Hx,
+    const magmaComplex __restrict__ *d_phc_coeffs_Ht )
 {
   // =============================================================================
   //> parameter homotopy for evaluating ∂H/∂x and ∂H/∂t
@@ -70,11 +71,11 @@ eval_parameter_homotopy(
 template< int Num_Of_Vars, int dHdx_Max_Terms, int dHdx_Max_Parts, int dHdx_Entry_Offset, int dHdx_Row_Offset >
 __device__ __inline__ void
 eval_Jacobian_Hx(
-    const int tx, magmaFloatComplex *s_track, magmaFloatComplex r_cgesvA[Num_Of_Vars],
-    const int* __restrict__ d_Hx_idx, magmaFloatComplex *s_phc_coeffs )
+    const int tx, magmaComplex *s_track, magmaComplex r_cgesvA[Num_Of_Vars],
+    const int* __restrict__ d_Hx_idx, magmaComplex *s_phc_coeffs )
 {
   for(int i = 0; i < Num_Of_Vars; i++) {
-    r_cgesvA[i] = MAGMA_C_ZERO;
+    r_cgesvA[i] = MAGMA_COMPLEX_ZERO;
 
     #pragma unroll 2
     for(int j = 0; j < dHdx_Max_Terms; j++) {
@@ -89,10 +90,10 @@ eval_Jacobian_Hx(
 template< int dHdt_Max_Terms, int dHdt_Max_Parts, int dHdt_Row_Offset >
 __device__ __inline__ void
 eval_Jacobian_Ht(
-    const int tx, magmaFloatComplex *s_track, magmaFloatComplex &r_cgesvB,
-    const int* __restrict__ d_Ht_idx, magmaFloatComplex *s_phc_coeffs)
+    const int tx, magmaComplex *s_track, magmaComplex &r_cgesvB,
+    const int* __restrict__ d_Ht_idx, magmaComplex *s_phc_coeffs)
 {
-  r_cgesvB = MAGMA_C_ZERO;
+  r_cgesvB = MAGMA_COMPLEX_ZERO;
   #pragma unroll 2
   for (int i = 0; i < dHdt_Max_Terms; i++) {
     r_cgesvB -= d_Ht_idx[i*dHdt_Max_Parts + tx*dHdt_Row_Offset] 
@@ -106,10 +107,10 @@ eval_Jacobian_Ht(
 template< int dHdt_Max_Terms, int dHdt_Max_Parts, int dHdt_Row_Offset >
 __device__ __inline__ void
 eval_Homotopy(
-    const int tx, magmaFloatComplex *s_track, magmaFloatComplex &r_cgesvB,
-    const int* __restrict__ d_Ht_idx, magmaFloatComplex *s_phc_coeffs)
+    const int tx, magmaComplex *s_track, magmaComplex &r_cgesvB,
+    const int* __restrict__ d_Ht_idx, magmaComplex *s_phc_coeffs)
 {
-  r_cgesvB = MAGMA_C_ZERO;
+  r_cgesvB = MAGMA_COMPLEX_ZERO;
   #pragma unroll 2
   for (int i = 0; i < dHdt_Max_Terms; i++) {
     r_cgesvB += d_Ht_idx[i*dHdt_Max_Parts + tx*dHdt_Row_Offset] 

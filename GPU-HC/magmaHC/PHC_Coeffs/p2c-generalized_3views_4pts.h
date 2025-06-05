@@ -3,7 +3,8 @@
 // ==========================================================================================================================
 //
 // Modifications
-//    Chiang-Heng Chien  24-05-24:   Shifted from Three_View_Generalized_Camera GitHub repo.
+//    Chien  24-05-24:   Shifted from Three_View_Generalized_Camera GitHub repo.
+//    Chien  25-06-01:   Enable single or double precision
 //
 //> (c) LEMS, Brown University
 //> Chiang-Heng Chien (chiang-heng_chien@brown.edu)
@@ -22,104 +23,107 @@
 #undef max
 #undef min
 
+#include "../definitions.hpp"
+#include "../typenames.hpp"
+
 namespace magmaHCWrapper {
 
   void p2c_generalized_3views_4pts(
-    magmaFloatComplex *h_targetParams, magmaFloatComplex *h_startParams, 
-    magmaFloatComplex *h_phc_coeffs_Hx, magmaFloatComplex *h_phc_coeffs_Ht
+    magmaComplex *h_targetParams, magmaComplex *h_startParams, 
+    magmaComplex *h_phc_coeffs_Hx, magmaComplex *h_phc_coeffs_Ht
   )
   {
-    magmaFloatComplex p1 = h_targetParams[0];
-    magmaFloatComplex p2 = h_targetParams[1];
-    magmaFloatComplex p3 = h_targetParams[2];
-    magmaFloatComplex p4 = h_targetParams[3];
-    magmaFloatComplex p5 = h_targetParams[4];
-    magmaFloatComplex p6 = h_targetParams[5];
-    magmaFloatComplex p7 = h_targetParams[6];
-    magmaFloatComplex p8 = h_targetParams[7];
-    magmaFloatComplex p9 = h_targetParams[8];
-    magmaFloatComplex p10 = h_targetParams[9];
-    magmaFloatComplex p11 = h_targetParams[10];
-    magmaFloatComplex p12 = h_targetParams[11];
-    magmaFloatComplex p13 = h_targetParams[12];
-    magmaFloatComplex p14 = h_targetParams[13];
-    magmaFloatComplex p15 = h_targetParams[14];
-    magmaFloatComplex p16 = h_targetParams[15];
-    magmaFloatComplex p17 = h_targetParams[16];
-    magmaFloatComplex p18 = h_targetParams[17];
-    magmaFloatComplex p19 = h_targetParams[18];
-    magmaFloatComplex p20 = h_targetParams[19];
-    magmaFloatComplex p21 = h_targetParams[20];
-    magmaFloatComplex p22 = h_targetParams[21];
-    magmaFloatComplex p23 = h_targetParams[22];
-    magmaFloatComplex p24 = h_targetParams[23];
-    magmaFloatComplex p25 = h_targetParams[24];
-    magmaFloatComplex p26 = h_targetParams[25];
-    magmaFloatComplex p27 = h_targetParams[26];
-    magmaFloatComplex p28 = h_targetParams[27];
-    magmaFloatComplex p29 = h_targetParams[28];
-    magmaFloatComplex p30 = h_targetParams[29];
-    magmaFloatComplex p31 = h_targetParams[30];
-    magmaFloatComplex p32 = h_targetParams[31];
-    magmaFloatComplex p33 = h_targetParams[32];
-    magmaFloatComplex p34 = h_targetParams[33];
-    magmaFloatComplex p35 = h_targetParams[34];
-    magmaFloatComplex p36 = h_targetParams[35];
-    magmaFloatComplex p37 = h_targetParams[36];
-    magmaFloatComplex p38 = h_targetParams[37];
-    magmaFloatComplex p39 = h_targetParams[38];
-    magmaFloatComplex p40 = h_targetParams[39];
-    magmaFloatComplex p41 = h_targetParams[40];
-    magmaFloatComplex p42 = h_targetParams[41];
-    magmaFloatComplex p43 = h_targetParams[42];
-    magmaFloatComplex p44 = h_targetParams[43];
-    magmaFloatComplex p45 = h_targetParams[44];
+    magmaComplex p1 = h_targetParams[0];
+    magmaComplex p2 = h_targetParams[1];
+    magmaComplex p3 = h_targetParams[2];
+    magmaComplex p4 = h_targetParams[3];
+    magmaComplex p5 = h_targetParams[4];
+    magmaComplex p6 = h_targetParams[5];
+    magmaComplex p7 = h_targetParams[6];
+    magmaComplex p8 = h_targetParams[7];
+    magmaComplex p9 = h_targetParams[8];
+    magmaComplex p10 = h_targetParams[9];
+    magmaComplex p11 = h_targetParams[10];
+    magmaComplex p12 = h_targetParams[11];
+    magmaComplex p13 = h_targetParams[12];
+    magmaComplex p14 = h_targetParams[13];
+    magmaComplex p15 = h_targetParams[14];
+    magmaComplex p16 = h_targetParams[15];
+    magmaComplex p17 = h_targetParams[16];
+    magmaComplex p18 = h_targetParams[17];
+    magmaComplex p19 = h_targetParams[18];
+    magmaComplex p20 = h_targetParams[19];
+    magmaComplex p21 = h_targetParams[20];
+    magmaComplex p22 = h_targetParams[21];
+    magmaComplex p23 = h_targetParams[22];
+    magmaComplex p24 = h_targetParams[23];
+    magmaComplex p25 = h_targetParams[24];
+    magmaComplex p26 = h_targetParams[25];
+    magmaComplex p27 = h_targetParams[26];
+    magmaComplex p28 = h_targetParams[27];
+    magmaComplex p29 = h_targetParams[28];
+    magmaComplex p30 = h_targetParams[29];
+    magmaComplex p31 = h_targetParams[30];
+    magmaComplex p32 = h_targetParams[31];
+    magmaComplex p33 = h_targetParams[32];
+    magmaComplex p34 = h_targetParams[33];
+    magmaComplex p35 = h_targetParams[34];
+    magmaComplex p36 = h_targetParams[35];
+    magmaComplex p37 = h_targetParams[36];
+    magmaComplex p38 = h_targetParams[37];
+    magmaComplex p39 = h_targetParams[38];
+    magmaComplex p40 = h_targetParams[39];
+    magmaComplex p41 = h_targetParams[40];
+    magmaComplex p42 = h_targetParams[41];
+    magmaComplex p43 = h_targetParams[42];
+    magmaComplex p44 = h_targetParams[43];
+    magmaComplex p45 = h_targetParams[44];
 
-    magmaFloatComplex q1 = h_startParams[0];
-    magmaFloatComplex q2 = h_startParams[1];
-    magmaFloatComplex q3 = h_startParams[2];
-    magmaFloatComplex q4 = h_startParams[3];
-    magmaFloatComplex q5 = h_startParams[4];
-    magmaFloatComplex q6 = h_startParams[5];
-    magmaFloatComplex q7 = h_startParams[6];
-    magmaFloatComplex q8 = h_startParams[7];
-    magmaFloatComplex q9 = h_startParams[8];
-    magmaFloatComplex q10 = h_startParams[9];
-    magmaFloatComplex q11 = h_startParams[10];
-    magmaFloatComplex q12 = h_startParams[11];
-    magmaFloatComplex q13 = h_startParams[12];
-    magmaFloatComplex q14 = h_startParams[13];
-    magmaFloatComplex q15 = h_startParams[14];
-    magmaFloatComplex q16 = h_startParams[15];
-    magmaFloatComplex q17 = h_startParams[16];
-    magmaFloatComplex q18 = h_startParams[17];
-    magmaFloatComplex q19 = h_startParams[18];
-    magmaFloatComplex q20 = h_startParams[19];
-    magmaFloatComplex q21 = h_startParams[20];
-    magmaFloatComplex q22 = h_startParams[21];
-    magmaFloatComplex q23 = h_startParams[22];
-    magmaFloatComplex q24 = h_startParams[23];
-    magmaFloatComplex q25 = h_startParams[24];
-    magmaFloatComplex q26 = h_startParams[25];
-    magmaFloatComplex q27 = h_startParams[26];
-    magmaFloatComplex q28 = h_startParams[27];
-    magmaFloatComplex q29 = h_startParams[28];
-    magmaFloatComplex q30 = h_startParams[29];
-    magmaFloatComplex q31 = h_startParams[30];
-    magmaFloatComplex q32 = h_startParams[31];
-    magmaFloatComplex q33 = h_startParams[32];
-    magmaFloatComplex q34 = h_startParams[33];
-    magmaFloatComplex q35 = h_startParams[34];
-    magmaFloatComplex q36 = h_startParams[35];
-    magmaFloatComplex q37 = h_startParams[36];
-    magmaFloatComplex q38 = h_startParams[37];
-    magmaFloatComplex q39 = h_startParams[38];
-    magmaFloatComplex q40 = h_startParams[39];
-    magmaFloatComplex q41 = h_startParams[40];
-    magmaFloatComplex q42 = h_startParams[41];
-    magmaFloatComplex q43 = h_startParams[42];
-    magmaFloatComplex q44 = h_startParams[43];
-    magmaFloatComplex q45 = h_startParams[44];
+    magmaComplex q1 = h_startParams[0];
+    magmaComplex q2 = h_startParams[1];
+    magmaComplex q3 = h_startParams[2];
+    magmaComplex q4 = h_startParams[3];
+    magmaComplex q5 = h_startParams[4];
+    magmaComplex q6 = h_startParams[5];
+    magmaComplex q7 = h_startParams[6];
+    magmaComplex q8 = h_startParams[7];
+    magmaComplex q9 = h_startParams[8];
+    magmaComplex q10 = h_startParams[9];
+    magmaComplex q11 = h_startParams[10];
+    magmaComplex q12 = h_startParams[11];
+    magmaComplex q13 = h_startParams[12];
+    magmaComplex q14 = h_startParams[13];
+    magmaComplex q15 = h_startParams[14];
+    magmaComplex q16 = h_startParams[15];
+    magmaComplex q17 = h_startParams[16];
+    magmaComplex q18 = h_startParams[17];
+    magmaComplex q19 = h_startParams[18];
+    magmaComplex q20 = h_startParams[19];
+    magmaComplex q21 = h_startParams[20];
+    magmaComplex q22 = h_startParams[21];
+    magmaComplex q23 = h_startParams[22];
+    magmaComplex q24 = h_startParams[23];
+    magmaComplex q25 = h_startParams[24];
+    magmaComplex q26 = h_startParams[25];
+    magmaComplex q27 = h_startParams[26];
+    magmaComplex q28 = h_startParams[27];
+    magmaComplex q29 = h_startParams[28];
+    magmaComplex q30 = h_startParams[29];
+    magmaComplex q31 = h_startParams[30];
+    magmaComplex q32 = h_startParams[31];
+    magmaComplex q33 = h_startParams[32];
+    magmaComplex q34 = h_startParams[33];
+    magmaComplex q35 = h_startParams[34];
+    magmaComplex q36 = h_startParams[35];
+    magmaComplex q37 = h_startParams[36];
+    magmaComplex q38 = h_startParams[37];
+    magmaComplex q39 = h_startParams[38];
+    magmaComplex q40 = h_startParams[39];
+    magmaComplex q41 = h_startParams[40];
+    magmaComplex q42 = h_startParams[41];
+    magmaComplex q43 = h_startParams[42];
+    magmaComplex q44 = h_startParams[43];
+    magmaComplex q45 = h_startParams[44];
 
     h_phc_coeffs_Hx[0]=q1*q10 + q2*q11 + q3*q12;
     h_phc_coeffs_Hx[1]=p1*q10 + p10*q1 + p2*q11 + p11*q2 + p3*q12 + p12*q3 - 2*q1*q10 - 2*q2*q11 - 2*q3*q12;
@@ -319,9 +323,9 @@ namespace magmaHCWrapper {
     h_phc_coeffs_Hx[195]=q7*q7+q8*q8+q9*q9;
     h_phc_coeffs_Hx[196]=2*p7*q7 + 2*p8*q8 + 2*p9*q9 - 2*q7*q7- 2*q8*q8- 2*q9*q9;
     h_phc_coeffs_Hx[197]=p7*p7- 2*p8*q8 - 2*p9*q9 - 2*p7*q7 +p8*p8+p9*p9+q7*q7+q8*q8+q9*q9;
-    h_phc_coeffs_Hx[198]=MAGMA_C_ONE;
-    h_phc_coeffs_Hx[199]=MAGMA_C_ZERO;
-    h_phc_coeffs_Hx[200]=MAGMA_C_ZERO;
+    h_phc_coeffs_Hx[198]=MAGMA_COMPLEX_ONE;
+    h_phc_coeffs_Hx[199]=MAGMA_COMPLEX_ZERO;
+    h_phc_coeffs_Hx[200]=MAGMA_COMPLEX_ZERO;
 
     h_phc_coeffs_Ht[0]=p1*q10 + p10*q1 + p2*q11 + p11*q2 + p3*q12 + p12*q3 - 2*q1*q10 - 2*q2*q11 - 2*q3*q12;
     h_phc_coeffs_Ht[1]=2*p1*p10 + 2*p2*p11 + 2*p3*p12 - 2*p1*q10 - 2*p10*q1 - 2*p2*q11 - 2*p11*q2 - 2*p3*q12 - 2*p12*q3 + 2*q1*q10 + 2*q2*q11 + 2*q3*q12;
@@ -455,8 +459,8 @@ namespace magmaHCWrapper {
     h_phc_coeffs_Ht[129]=2*p7*p40 + 2*p8*p41 - 2*p7*p43 + 2*p9*p42 - 2*p8*p44 - 2*p9*p45 - 2*p7*q40 - 2*p40*q7 - 2*p8*q41 - 2*p41*q8 + 2*p7*q43 + 2*p43*q7 - 2*p9*q42 - 2*p42*q9 + 2*p8*q44 + 2*p44*q8 + 2*p9*q45 + 2*p45*q9 + 2*q7*q40 + 2*q8*q41 - 2*q7*q43 + 2*q9*q42 - 2*q8*q44 - 2*q9*q45;
     h_phc_coeffs_Ht[130]=2*p7*q7 - 2*q8*q8- 2*q9*q9- 2*q7*q7+ 2*p8*q8 + 2*p9*q9;
     h_phc_coeffs_Ht[131]=2*p7*p7- 4*p7*q7 + 2*p8*p8- 4*p8*q8 + 2*p9*p9- 4*p9*q9 + 2*q7*q7+ 2*q8*q8+ 2*q9*q9;
-    h_phc_coeffs_Ht[132]=MAGMA_C_ONE;
-    h_phc_coeffs_Ht[133]=MAGMA_C_ZERO;
+    h_phc_coeffs_Ht[132]=MAGMA_COMPLEX_ONE;
+    h_phc_coeffs_Ht[133]=MAGMA_COMPLEX_ZERO;
 
   }
 } // end of namespace

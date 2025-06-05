@@ -21,6 +21,7 @@
 //> MAGMA
 #include "magma_v2.h"
 
+#include "typenames.hpp"
 #include "definitions.hpp"
 #include "util.hpp"
 
@@ -36,12 +37,12 @@ public:
     ~Evaluations();
 
     //> Write data to files
-    void Write_Converged_Sols( magmaFloatComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
+    void Write_Converged_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
 
     //> Evaluate GPU-HC Solutions
-    void Evaluate_GPUHC_Sols( magmaFloatComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity, int ransac_sample_offset );
-    void Evaluate_RANSAC_GPUHC_Sols( magmaFloatComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity );
-    void Find_Unique_Sols( magmaFloatComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
+    void Evaluate_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity, int ransac_sample_offset );
+    void Evaluate_RANSAC_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity );
+    void Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
 
     //> Others
     void Flush_Out_Data();
@@ -66,11 +67,11 @@ private:
     std::ofstream GPUHC_Track_Sols_File;
     std::ofstream GPUHC_Actual_Sols_Steps_File;
 
-    float Var_Diff_In_Real_Part( magmaFloatComplex *Sol1, magmaFloatComplex *Sol2, int sol1_offset, int sol2_offset, int var_index ) {
-        return std::fabs(MAGMA_C_REAL((Sol1 + sol1_offset*(num_of_variables+1))[var_index]) - MAGMA_C_REAL((Sol2 + sol2_offset*(num_of_variables+1))[var_index]));
+    float Var_Diff_In_Real_Part( magmaComplex *Sol1, magmaComplex *Sol2, int sol1_offset, int sol2_offset, int var_index ) {
+        return std::fabs(MAGMA_COMPLEX_REAL((Sol1 + sol1_offset*(num_of_variables+1))[var_index]) - MAGMA_COMPLEX_REAL((Sol2 + sol2_offset*(num_of_variables+1))[var_index]));
     };
-    float Var_Diff_In_Imag_Part( magmaFloatComplex *Sol1, magmaFloatComplex *Sol2, int sol1_offset, int sol2_offset, int var_index ) {
-        return std::fabs(MAGMA_C_IMAG((Sol1 + sol1_offset*(num_of_variables+1))[var_index]) - MAGMA_C_IMAG((Sol2 + sol2_offset*(num_of_variables+1))[var_index]));
+    float Var_Diff_In_Imag_Part( magmaComplex *Sol1, magmaComplex *Sol2, int sol1_offset, int sol2_offset, int var_index ) {
+        return std::fabs(MAGMA_COMPLEX_IMAG((Sol1 + sol1_offset*(num_of_variables+1))[var_index]) - MAGMA_COMPLEX_IMAG((Sol2 + sol2_offset*(num_of_variables+1))[var_index]));
     };
 
     std::vector< int > Unique_Sols_Index;

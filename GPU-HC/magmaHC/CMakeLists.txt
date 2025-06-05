@@ -19,8 +19,6 @@ set (control_sources
 
   #>  device function
   dev-cgesv-batched-small.cuh
-  dev-cgesv-batched-small-sm.cuh
-  dev-get-new-data.cuh
   gpu-idx-evals/dev-eval-indxing-generalized_3views_4pts.cuh
   gpu-idx-evals/dev-eval-indxing-generalized_3views_6lines.cuh
 
@@ -28,7 +26,8 @@ set (control_sources
   PHC_Coeffs/p2c-generalized_3views_4pts.h
   PHC_Coeffs/p2c-numerical_generalized_3views_6lines.h
 
-  #> Utilities
+  #> Others
+  typenames.hpp
   util.hpp
 )
 
