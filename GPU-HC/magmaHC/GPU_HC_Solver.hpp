@@ -80,7 +80,6 @@ class GPU_HC_Solver {
     bool                    *d_is_GPU_HC_Sol_Infinity;
 
 public:
-    bool                    Use_P2C;
 
     //> The timers
     real_Double_t           gpu_time;
@@ -130,28 +129,6 @@ private:
     //> RANSAC data
     int Num_Of_Coeffs_From_Params;
     std::vector<int> GPUHC_Actual_Sols_Steps_Collections;
-
-    // //> Handling the typenames
-    // bool is_float;
-
-    // //> May not in use
-    // bool check_data_type() {
-    //     if (std::is_floating_point<T>::value) {
-    //         if (std::is_same<T, float>::value) {
-    //             is_float = true;
-    //             return true;
-    //         } else if (std::is_same<T, double>::value) {
-    //             is_float = false;
-    //             return true;
-    //         } else {
-    //             LOG_ERROR("Type in typename is a floating-point type but not float or double. Please use float or double.");
-    //             return false;
-    //         }
-    //     } else {
-    //         LOG_ERROR("Type in typename is not a floating-point type");
-    //         return false;
-    //     }
-    // }
 };
 
 #endif
