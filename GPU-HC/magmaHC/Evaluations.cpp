@@ -48,6 +48,11 @@ Evaluations::Evaluations( std::string Output_Files_Path, int num_of_tracks, int 
   GPUHC_Actual_Sols_Steps_File.open(write_actual_sols_HC_steps_file_dir);
   if ( !GPUHC_Actual_Sols_Steps_File.is_open() ) LOG_FILE_ERROR(write_actual_sols_HC_steps_file_dir);
 
+  Rot21       = new float[9];
+  Rot31       = new float[9];
+  Sol_Rotm_21 = new float[9];
+  Sol_Rotm_31 = new float[9];
+
   //> util class
   MVG_Utility = std::shared_ptr<util>(new util());
 }
@@ -105,7 +110,11 @@ void Evaluations::Evaluate_GPUHC_Sols( \
       }
     }
 
-    if (Num_Of_Real_Vars == num_of_variables) Num_Of_Real_Sols++;
+    if (Num_Of_Real_Vars == num_of_variables) {
+      Num_Of_Real_Sols++;
+      const int offset = num_of_tracks * (num_of_variables+1) * ransac_sample_offset + bs * (num_of_variables+1);
+      Convert_Real_Sols_to_Rotation_Matrix(h_GPU_HC_Track_Sols + offset);
+    }
   }
 }
 
@@ -175,10 +184,45 @@ void Evaluations::Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_i
 #endif
 }
 
+void Evaluations::Convert_Real_Sols_to_Rotation_Matrix( magmaFloatComplex *h_GPU_HC_Track_Sols ) {
+  //> \rot_{21}
+  Rot21[0] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[0]);
+  Rot21[1] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[1]);
+  Rot21[2] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[2]);
+  MVG_Utility->Cayley_To_Rotation_Matrix( Rot21, Sol_Rotm_21 );
+  // std::copy(Sol_Rotm_21, Sol_Rotm_21 + 9, begin(normalized_R21));
+  std::cout << "R2: " << std::endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::cout << std::fixed << std::setprecision(6) << Sol_Rotm_21[i*3 + j] << "\t";
+    }
+    std::cout << std::endl;
+  }
+  
+  //> \rot_{31}
+  Rot31[0] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[3]);
+  Rot31[1] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[4]);
+  Rot31[2] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[5]);
+  MVG_Utility->Cayley_To_Rotation_Matrix( Rot31, Sol_Rotm_31 );
+  // std::copy(Sol_Rotm_31, Sol_Rotm_31 + 9, begin(normalized_R31));
+  std::cout << "R3: " << std::endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::cout << std::fixed << std::setprecision(6) << Sol_Rotm_31[i*3 + j] << "\t";
+    }
+    std::cout << std::endl;
+  }
+}
+
 Evaluations::~Evaluations() {
   //> Close all files
   GPUHC_Track_Sols_File.close();
   GPUHC_Actual_Sols_Steps_File.close();
+
+  delete [] Rot21;
+  delete [] Rot31;
+  delete [] Sol_Rotm_21;
+  delete [] Sol_Rotm_31;
 }
 
 

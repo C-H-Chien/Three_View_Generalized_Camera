@@ -28,12 +28,6 @@
 class Data_Reader;
 class Evaluations;
 
-// template<typename magma_T>
-// struct MAGMA_TypeName {
-//     typedef typename std::conditional< std::is_same<magma_T, float>::value, magmaFloatComplex, magmaDoubleComplex>::type magmaComplex;
-//     typedef typename std::conditional< std::is_same<magma_T, float>::value, magmaFloatComplex_ptr, magmaDoubleComplex_ptr>::type magmaComplex_ptr;
-// };
-
 class GPU_HC_Solver {
     
     magma_device_t cdev;       // variable to indicate current gpu id
@@ -42,6 +36,7 @@ class GPU_HC_Solver {
     //> Varaibles as sizes of arrays
     magma_int_t             dHdx_Index_Size;
     magma_int_t             dHdt_Index_Size;
+    magma_int_t             P2C_Index_Size;
     magma_int_t             dHdx_PHC_Coeffs_Size;
     magma_int_t             dHdt_PHC_Coeffs_Size;
     magma_int_t             ldd_phc_Params_Hx;
@@ -58,6 +53,7 @@ class GPU_HC_Solver {
     magmaComplex            *h_dHdt_PHC_Coeffs;
     int                     *h_dHdx_Index;
     int                     *h_dHdt_Index;
+    int                     *h_P2C_Index;
     magmaComplex            *h_Debug_Purpose;
     bool                    *h_is_GPU_HC_Sol_Converge;
     bool                    *h_is_GPU_HC_Sol_Infinity;
@@ -67,17 +63,22 @@ class GPU_HC_Solver {
 
     //> Variables and arrays on the GPU side
     magmaComplex_ptr        d_Start_Sols, d_Homotopy_Sols;
-    magmaComplex_ptr        d_Start_Params, d_Target_Params;
+    
     magmaComplex_ptr        d_dHdx_PHC_Coeffs;
     magmaComplex_ptr        d_dHdt_PHC_Coeffs;
+    magmaComplex_ptr        d_Start_Params;
+    magmaComplex_ptr        d_Target_Params;
     int                     *d_dHdx_Index;
     int                     *d_dHdt_Index;
+    int                     *d_P2C_Index;
     magmaComplex            **d_Start_Sols_array;
     magmaComplex            **d_Homotopy_Sols_array;
-    magmaComplex            *d_diffParams;
     magmaComplex            *d_Debug_Purpose;
     bool                    *d_is_GPU_HC_Sol_Converge;
     bool                    *d_is_GPU_HC_Sol_Infinity;
+
+    magmaComplex            *d_Params_Diff;
+    // magmaComplex            *d_Const_Coeff_in_dHdt;
 
 public:
 
@@ -125,6 +126,9 @@ private:
     int dHdt_Max_Terms;
     int dHdt_Max_Parts;
     int Max_Order_Of_T;
+
+    int P2C_Max_Terms_per_Coeff;
+    int P2C_Max_Params_per_Term;
 
     //> RANSAC data
     int Num_Of_Coeffs_From_Params;

@@ -14,7 +14,7 @@
 #define REPROJ_ERROR_INLIER_THRESH              (2) //> in pixels
 
 //> Settings for GPU-HC Kernel
-#define USE_SINGLE_PRECISION                    (false)
+#define USE_SINGLE_PRECISION                    (true)
 
 //> Evaluation macros
 #define DUPLICATE_SOL_DIFF_TOL                  (1e-4)

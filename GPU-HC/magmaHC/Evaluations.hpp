@@ -44,6 +44,8 @@ public:
     void Evaluate_RANSAC_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity );
     void Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
 
+    void Convert_Real_Sols_to_Rotation_Matrix( magmaFloatComplex *h_GPU_HC_Track_Sols );
+
     //> Others
     void Flush_Out_Data();
     
@@ -58,6 +60,12 @@ public:
     float Percentage_Of_Inf_Sols;
     float Percentage_Of_Real_Sols;
     float Percentage_Of_Unique_Sols;
+
+    //> rotation matrices
+    float *Rot21;
+    float *Rot31;
+    float* Sol_Rotm_21;
+    float* Sol_Rotm_31;
 
 private:
     //> util

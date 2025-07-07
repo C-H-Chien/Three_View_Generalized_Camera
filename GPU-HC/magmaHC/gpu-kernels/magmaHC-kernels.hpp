@@ -54,4 +54,22 @@ real_Double_t kernel_HC_Solver_generalized_3views_6lines(
   magmaComplex*    d_Debug_Purpose
 );
 
+real_Double_t kernel_HC_Solver_generalized_3views_3orientedpoints(
+  magma_queue_t         my_queue,
+  int                   HC_max_steps, 
+  int                   HC_max_correction_steps, 
+  int                   HC_delta_t_incremental_steps,
+  magmaComplex**        d_startSols_array, 
+  magmaComplex**        d_Track_array,
+  magmaComplex*         d_Start_Params,
+  magmaComplex*         d_Target_Params,
+  magmaComplex*         d_Params_Diff,
+  int*                  d_dHdx_idx_array,
+  int*                  d_dHdt_idx_array, 
+  int*                  d_P2C_Index,
+  bool*                 d_is_GPU_HC_Sol_Converge,
+  bool*                 d_is_GPU_HC_Sol_Infinity,
+  magmaComplex*         d_Debug_Purpose
+);
+
 #endif

@@ -16,11 +16,13 @@ set (control_sources
   gpu-kernels/magmaHC-kernels.hpp
   gpu-kernels/kernel_HC_Solver_generalized_3views_4pts.cu
   gpu-kernels/kernel_HC_Solver_generalized_3views_6lines.cu
+  gpu-kernels/kernel_HC_Solver_generalized_3views_3orientedpoints.cu
 
   #>  device function
   dev-cgesv-batched-small.cuh
   gpu-idx-evals/dev-eval-indxing-generalized_3views_4pts.cuh
   gpu-idx-evals/dev-eval-indxing-generalized_3views_6lines.cuh
+  gpu-idx-evals/dev-eval-indxing-generalized_3views_3orientedpoints.cuh
 
   #>  P2C
   PHC_Coeffs/p2c-generalized_3views_4pts.h

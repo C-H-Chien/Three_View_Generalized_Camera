@@ -33,6 +33,7 @@ Data_Reader::Data_Reader(std::string Problem_Filename, std::string RANSAC_Data_F
 
     File_Name_dHdx_Indx = Problem_Filename + std::string("/dHdx_indx.txt");
     File_Name_dHdt_Indx = Problem_Filename + std::string("/dHdt_indx.txt");
+    File_Name_P2C_Indx = Problem_Filename + std::string("/P2C_indx.txt");
 
     File_Name_Intrinsic_Matrix = RANSAC_Data_Path_ + std::string("/Intrinsic_Matrix.txt");
 }
@@ -41,8 +42,8 @@ bool Data_Reader::Construct_Coeffs_From_Params( std::string HC_Problem, \
         magmaComplex* h_Target_Params,     magmaComplex* h_Start_Params, \
         magmaComplex* &h_dHdx_PHC_Coeffs,  magmaComplex* &h_dHdt_PHC_Coeffs ) 
 {
-    if (HC_Problem == "generalized_3views_4pts")           magmaHCWrapper::p2c_generalized_3views_4pts(h_Target_Params, h_Start_Params, h_dHdx_PHC_Coeffs, h_dHdt_PHC_Coeffs);
-    else if (HC_Problem == "generalized_3views_6lines")    magmaHCWrapper::p2c_numerical_generalized_3views_6lines(h_dHdx_PHC_Coeffs, h_dHdt_PHC_Coeffs);
+    if (HC_Problem == "generalized_3views_4pts")                    magmaHCWrapper::p2c_generalized_3views_4pts(h_Target_Params, h_Start_Params, h_dHdx_PHC_Coeffs, h_dHdt_PHC_Coeffs);
+    else if (HC_Problem == "generalized_3views_6lines")             magmaHCWrapper::p2c_numerical_generalized_3views_6lines(h_dHdx_PHC_Coeffs, h_dHdt_PHC_Coeffs);
     else {
         LOG_ERROR("Invalid HC problem name or P2C function is not included in the Construct_Coeffs_From_Params function.");
         return false;
@@ -181,6 +182,27 @@ bool Data_Reader::Read_dHdt_Indices( int* &h_dHdt_Index ) {
     std::cout << "Printing h_dHdt_Index ..." << std::endl;
     for (int i = 0; i < 10; i++) printf("%d\t", (int)h_dHdt_Index[i]);
     std::cout << std::endl;
+#endif
+        return true;
+    }
+}
+
+bool Data_Reader::Read_Indices_for_Params_Conversion_to_Coeffs( int* &h_P2C_Index ) {
+    int index, d = 0;
+    File_P2C_Indices.open(File_Name_P2C_Indx, std::ios_base::in);
+    if (!File_P2C_Indices) {
+        LOG_FILE_ERROR(File_Name_P2C_Indx);
+        return false;
+    }
+    else {
+        while (File_P2C_Indices >> index) {
+            (h_P2C_Index)[d] = (int)index;
+            d++;
+        }
+#if DATA_READER_DEBUG       
+        std::cout << "Printing h_P2C_Index ..." << std::endl;
+        for (int i = 0; i < 15; i++) printf("%d\t", (int)h_P2C_Index[i]);
+        std::cout << std::endl;
 #endif
         return true;
     }
