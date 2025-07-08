@@ -4,13 +4,13 @@
 problem_name: generalized_3views_3orientedpoints
 problem_print_out_name: Generalized Three-View Relative Pose Problem using 3 oriented-points
 
-#> Reference: Ding, Yaqing, Chiang-Heng Chien
+#> Reference: Yaqing Ding and Chiang-Heng Chien
 
 #> GPU-HC Settings
 GPUHC_Type: P2C
-GPUHC_Max_Steps: 200
-GPUHC_Max_Correction_Steps: 200
-GPUHC_Num_Of_Steps_to_Increase_Delta_t: 5
+GPUHC_Max_Steps: 100
+GPUHC_Max_Correction_Steps: 3
+GPUHC_Num_Of_Steps_to_Increase_Delta_t: 4
 
 #> Problem spec
 Num_Of_Vars: 15

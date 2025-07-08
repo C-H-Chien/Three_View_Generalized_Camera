@@ -83,7 +83,6 @@ HC_solver_generalized_3views_3orientedpoints(
 #if USE_SINGLE_PRECISION
   extern __shared__ magmaComplex zdata[];
   magmaComplex *s_startParams        = (magmaComplex*)(zdata);
-  // magmaComplex *s_targetParams       = s_startParams            + (Num_Of_Params + 1);
   magmaComplex *s_diff_params        = s_startParams            + (Num_Of_Params + 1);
   magmaComplex *s_param_homotopy     = s_diff_params            + (Num_Of_Params + 1);
   magmaComplex *s_sols               = s_param_homotopy         + (Num_Of_Params + 1);
@@ -118,20 +117,14 @@ HC_solver_generalized_3views_3orientedpoints(
   s_sols[tx]                = d_startSols[tx];
   s_track[tx]               = d_track[tx];
   s_startParams[tx]         = d_startParams[tx];
-  // s_targetParams[tx]        = d_targetParams[tx];
   s_diff_params[tx]         = d_diffParams[tx];
-  // s_coeffs_dHdt[tx]         = d_const_coeff_in_dHdt[tx];
   s_track_last_success[tx]  = s_track[tx];
   if (tx == 0) {
     #pragma unroll
     for(int i = Num_Of_Vars; i <= Num_Of_Params; i++) {
       s_startParams[i]      = d_startParams[i];
-      // s_targetParams[i]     = d_targetParams[i];
       s_diff_params[i]      = d_diffParams[i];
     }
-    // for(int i = Num_Of_Vars; i <= Num_Of_Const_Coeffs_in_dHdt; i++) {
-    //   s_coeffs_dHdt[i]      = d_const_coeff_in_dHdt[i];
-    // }
     s_sols[Num_Of_Vars]                       = MAGMA_MAKE_COMPLEX(1.0, 0.0);
     s_track[Num_Of_Vars]                      = MAGMA_MAKE_COMPLEX(1.0, 0.0);
     s_track_last_success[Num_Of_Vars]         = MAGMA_MAKE_COMPLEX(1.0, 0.0);
@@ -147,9 +140,6 @@ HC_solver_generalized_3views_3orientedpoints(
   FP_type r_sqrt_corr;
   bool r_isSuccessful;
   bool r_isInfFail;
-
-  //> DEBUG
-  // bool flag = true;
 
   //#pragma unroll
   volatile int hc_max_steps = HC_max_steps;
@@ -190,13 +180,6 @@ HC_solver_generalized_3views_3orientedpoints(
         //> evaluate the coefficients of dH/dx and dH/dt
         compute_param_homotopy< Num_Of_Vars >( tx, t0, s_startParams, s_diff_params, s_param_homotopy );
         eval_coefficients_for_Jacobians< Num_Of_Vars, Num_Of_Terms_Per_Coeff, Num_Of_P2C_Params_Per_Term, Num_Of_Const_Coeffs_in_dHdt >(tx, t0, s_diff_params, s_param_homotopy, s_coeffs_dHdx, s_coeffs_dHdt, d_P2C_idx);
-
-        // if (step == 0 && rk_step ==0 && t0 == 0 && tx == 0 && batchid == 0 && flag) {
-        //   for (int i = 0; i < 15; i++) {
-        //     printf("(%.10f, %.10f)\n", MAGMA_C_REAL(s_coeffs_dHdx[i]), MAGMA_C_IMAG(s_coeffs_dHdx[i]));
-        //   }
-        //   flag = false;
-        // }
 
         //> Evaluate dH/dx and dH/dt
         eval_Jacobian_Hx< Num_Of_Vars, dHdx_Max_Terms, dHdx_Max_Parts, dHdx_Entry_Offset, dHdx_Row_Offset >( tx, s_track, r_cgesvA, d_dHdx_idx, s_coeffs_dHdx );
