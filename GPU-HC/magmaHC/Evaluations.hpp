@@ -24,6 +24,7 @@
 #include "typenames.hpp"
 #include "definitions.hpp"
 #include "util.hpp"
+#include "Data_Reader.hpp"
 
 class util;
 
@@ -31,7 +32,7 @@ class Evaluations {
     
 public:
     //> Constructor
-    Evaluations( std::string, int, int );
+    Evaluations( std::string, int, int, int );
 
     //> Destructor
     ~Evaluations();
@@ -40,7 +41,7 @@ public:
     void Write_Converged_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
 
     //> Evaluate GPU-HC Solutions
-    void Evaluate_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity, int ransac_sample_offset );
+    void Evaluate_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity, int ransac_sample_offset, std::string Problem_Name );
     void Evaluate_RANSAC_GPUHC_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge, bool *h_is_GPU_HC_Sol_Infinity );
     void Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge );
 
@@ -62,14 +63,19 @@ public:
     float Percentage_Of_Unique_Sols;
 
     //> rotation matrices
+    float* GT_R2;
+    float* GT_R3;
     float *Rot21;
     float *Rot31;
     float* Sol_Rotm_21;
     float* Sol_Rotm_31;
 
+    bool b_is_equal_to_R2;
+    bool b_is_equal_to_R3;
+
 private:
-    //> util
     std::shared_ptr<util> MVG_Utility = nullptr;
+    std::shared_ptr<Data_Reader> Load_Data = nullptr;
 
     //> output streams for files to be written
     std::ofstream GPUHC_Track_Sols_File;
@@ -88,6 +94,7 @@ private:
 
     const int num_of_tracks;
     const int num_of_variables;
+    const int num_of_parameters;
 };
 
 #endif

@@ -41,7 +41,18 @@ public:
         R_(2,2) = 1 + r[2]*r[2] - (r[0]*r[0] + r[1]*r[1]);
 
         //> The rotation matrix R now is up to some scale which needs to be normalized.
-        R_ = Normalize_Rotation_Matrix( R_ );
+        // R_ = Normalize_Rotation_Matrix( R_ );
+        
+        float norm_factor = 1 + r[0]*r[0] + r[1]*r[1] + r[2]*r[2];
+        R_(0,0) /= norm_factor;
+        R_(0,1) /= norm_factor;
+        R_(0,2) /= norm_factor;
+        R_(1,0) /= norm_factor;
+        R_(1,1) /= norm_factor;
+        R_(1,2) /= norm_factor;
+        R_(2,0) /= norm_factor;
+        R_(2,1) /= norm_factor;
+        R_(2,2) /= norm_factor;
     }
 
     float *Normalize_Rotation_Matrix( float *R ) {
@@ -225,6 +236,29 @@ public:
 
         get_Matrix_Transpose< 3 >(inv_K);
         get_Matrix_Matrix_Product< 3 >( F, inv_K, F );
+    }
+
+    bool is_equal_matrices(int num_of_rows, int num_of_cols, float* A, float* A_bar) {
+        #define A(i,j)      A[(i)*num_of_cols + (j)]
+        #define A_bar(i,j)  A_bar[(i)*num_of_cols + (j)]
+        int similar_count = 0;
+        for (int i = 0; i < num_of_rows; i++) {
+            for (int j = 0; j < num_of_cols; j++) {
+                if (fabs(A(i,j) - A_bar(i,j)) < 0.0001) similar_count++;
+            }
+        }
+        return (similar_count == num_of_rows * num_of_cols) ? (true) : (false);
+    }
+
+    void print_a_matrix(int num_of_rows, int num_of_cols, float* matrix, std::string matrix_name = "") {
+        std::cout << matrix_name << std::endl;
+        std::cout << std::fixed << std::setprecision(6) << std::showpos;
+        for (int i = 0; i < num_of_rows; i++) {
+            for (int j = 0; j < num_of_cols; j++) {
+                std::cout << matrix[i*num_of_cols + j] << "\t";
+            }
+            std::cout << std::endl;
+        }
     }
 
     ~util() {

@@ -29,6 +29,7 @@ class Data_Reader {
 public:
     //> Constructor
     Data_Reader(std::string, std::string, const int, const int, const int);
+    Data_Reader(std::string, const int, const int, const int);
 
     bool Read_Start_Params( magmaComplex* &h_Start_Params );
     bool Read_Target_Params( magmaComplex* &h_Target_Params );
@@ -37,6 +38,9 @@ public:
     bool Read_dHdx_Indices( int* &h_dHdx_Index );
     bool Read_dHdt_Indices( int* &h_dHdt_Index );
     bool Read_Indices_for_Params_Conversion_to_Coeffs( int* &h_P2C_Index );
+
+    //> Only used for evaluation when ground-truth rotations are provided
+    bool Read_GT_Rotations( float* R2, float* R3 );
 
     //> TODO: RANSAC Data
     // bool Read_Camera_Matrices( float Pose21[12], float Pose31[12], float K[9], int tp_index );
@@ -53,10 +57,7 @@ private:
     std::string File_Name_dHdx_Indx;
     std::string File_Name_dHdt_Indx;
     std::string File_Name_P2C_Indx;
-    std::string File_Name_Intrinsic_Matrix;
-    std::string File_Name_Pose21;
-    std::string File_Name_Pose31;
-    std::string File_Name_Triplet_Edgels;
+    std::string File_Name_GT_Rotations;
 
     //> input streams from problem files
     std::fstream File_Start_Params;
@@ -65,10 +66,7 @@ private:
     std::fstream File_dHdx_Indices;
     std::fstream File_dHdt_Indices;
     std::fstream File_P2C_Indices;
-    std::fstream File_Intrinsic_Matrix;
-    std::fstream File_Pose21;
-    std::fstream File_Pose31;
-    std::fstream File_Triplet_Edgels;
+    std::fstream File_GT_Rotations;
 
     const int num_of_tracks;
     const int num_of_variables;

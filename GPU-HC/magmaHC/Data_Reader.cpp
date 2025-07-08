@@ -34,8 +34,11 @@ Data_Reader::Data_Reader(std::string Problem_Filename, std::string RANSAC_Data_F
     File_Name_dHdx_Indx = Problem_Filename + std::string("/dHdx_indx.txt");
     File_Name_dHdt_Indx = Problem_Filename + std::string("/dHdt_indx.txt");
     File_Name_P2C_Indx = Problem_Filename + std::string("/P2C_indx.txt");
+}
 
-    File_Name_Intrinsic_Matrix = RANSAC_Data_Path_ + std::string("/Intrinsic_Matrix.txt");
+Data_Reader::Data_Reader(std::string Problem_Filename, const int Num_Of_Tracks, const int Num_Of_Vars, const int Num_Of_Params) \
+    : num_of_tracks(Num_Of_Tracks), num_of_variables(Num_Of_Vars), num_of_params(Num_Of_Params) {
+    File_Name_GT_Rotations = Problem_Filename + std::string("/GT_Rotations.txt");
 }
 
 bool Data_Reader::Construct_Coeffs_From_Params( std::string HC_Problem, \
@@ -202,6 +205,46 @@ bool Data_Reader::Read_Indices_for_Params_Conversion_to_Coeffs( int* &h_P2C_Inde
 #if DATA_READER_DEBUG       
         std::cout << "Printing h_P2C_Index ..." << std::endl;
         for (int i = 0; i < 15; i++) printf("%d\t", (int)h_P2C_Index[i]);
+        std::cout << std::endl;
+#endif
+        return true;
+    }
+}
+
+bool Data_Reader::Read_GT_Rotations( float* R2, float* R3 ) {
+    float index;
+    int d = 0;
+    File_GT_Rotations.open(File_Name_GT_Rotations, std::ios_base::in);
+    if (!File_GT_Rotations) {
+        LOG_FILE_ERROR(File_Name_GT_Rotations);
+        return false;
+    }
+    else {
+        while (File_GT_Rotations >> index) {
+            (R2)[d] = index;
+            d++;
+            if (d == 9) break;
+        }
+        d = 0;
+        while (File_GT_Rotations >> index) {
+            (R3)[d] = index;
+            d++;
+            if (d == 9) break;
+        }
+#if DATA_READER_DEBUG       
+        std::cout << "Printing R2 and R3 ..." << std::endl;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                std::cout << R2[i*3 + j] << "\t";
+            }
+            std::cout << std::endl;
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                std::cout << R3[i*3 + j] << "\t";
+            }
+            std::cout << std::endl;
+        }
         std::cout << std::endl;
 #endif
         return true;

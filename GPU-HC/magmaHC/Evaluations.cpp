@@ -24,8 +24,8 @@
 #include "Evaluations.hpp"
 
 //> Constructor
-Evaluations::Evaluations( std::string Output_Files_Path, int num_of_tracks, int num_of_vars )
-  : WRITE_FILES_PATH(Output_Files_Path), num_of_tracks(num_of_tracks), num_of_variables(num_of_vars)
+Evaluations::Evaluations( std::string Output_Files_Path, int num_of_tracks, int num_of_vars, int num_of_params )
+  : WRITE_FILES_PATH(Output_Files_Path), num_of_tracks(num_of_tracks), num_of_variables(num_of_vars), num_of_parameters(num_of_params)
 {
   //> Initialize to zeros
   Num_Of_Inf_Sols = 0;
@@ -48,12 +48,17 @@ Evaluations::Evaluations( std::string Output_Files_Path, int num_of_tracks, int 
   GPUHC_Actual_Sols_Steps_File.open(write_actual_sols_HC_steps_file_dir);
   if ( !GPUHC_Actual_Sols_Steps_File.is_open() ) LOG_FILE_ERROR(write_actual_sols_HC_steps_file_dir);
 
+  GT_R2       = new float[9];
+  GT_R3       = new float[9];
   Rot21       = new float[9];
   Rot31       = new float[9];
   Sol_Rotm_21 = new float[9];
   Sol_Rotm_31 = new float[9];
 
-  //> util class
+  b_is_equal_to_R2 = false;
+  b_is_equal_to_R3 = false;
+
+  //> class pointers
   MVG_Utility = std::shared_ptr<util>(new util());
 }
 
@@ -94,8 +99,13 @@ void Evaluations::Evaluate_GPUHC_Sols( \
     magmaComplex *h_GPU_HC_Track_Sols, \
     bool *h_is_GPU_HC_Sol_Converge, \
     bool *h_is_GPU_HC_Sol_Infinity, \
-    int ransac_sample_offset ) 
+    int ransac_sample_offset, \
+    std::string Problem_Name ) 
 {
+  std::string Problem_File_Path       = std::string("../../problems/") + Problem_Name;
+  Load_Data = std::shared_ptr<Data_Reader>(new Data_Reader(Problem_File_Path, num_of_tracks, num_of_variables, num_of_parameters));
+  Load_Data->Read_GT_Rotations( GT_R2, GT_R3 );
+
   //> Count the number of converged solutions, the number of infinity failed solutions, and the number of real solutions
   for (int bs = 0; bs < num_of_tracks; bs++) {
     if ( (h_is_GPU_HC_Sol_Converge + num_of_tracks * ransac_sample_offset)[ bs ] ) Num_Of_Coverged_Sols++;
@@ -113,25 +123,33 @@ void Evaluations::Evaluate_GPUHC_Sols( \
     if (Num_Of_Real_Vars == num_of_variables) {
       Num_Of_Real_Sols++;
       const int offset = num_of_tracks * (num_of_variables+1) * ransac_sample_offset + bs * (num_of_variables+1);
-      Convert_Real_Sols_to_Rotation_Matrix(h_GPU_HC_Track_Sols + offset);
+      
+      if (Problem_Name == "generalized_3views_3orientedpoints") {
+        
+        Convert_Real_Sols_to_Rotation_Matrix(h_GPU_HC_Track_Sols + offset);
+
+        b_is_equal_to_R2 = MVG_Utility->is_equal_matrices(3, 3, Sol_Rotm_21, GT_R2);
+        b_is_equal_to_R3 = MVG_Utility->is_equal_matrices(3, 3, Sol_Rotm_31, GT_R3);
+        if (b_is_equal_to_R2 && b_is_equal_to_R3) LOG_CONGRAT_MESG("Found GT rotations!"); 
+      }
     }
   }
 }
 
-void Evaluations::Evaluate_RANSAC_GPUHC_Sols( \
-    magmaComplex *h_GPU_HC_Track_Sols, \
-    bool *h_is_GPU_HC_Sol_Converge, \
-    bool *h_is_GPU_HC_Sol_Infinity )
-{
-  //> Loop over all RANSAC iterations
-  for (int ri = 0; ri < NUM_OF_RANSAC_ITERATIONS; ri++) {
-    Evaluate_GPUHC_Sols( h_GPU_HC_Track_Sols, h_is_GPU_HC_Sol_Converge, h_is_GPU_HC_Sol_Infinity, ri );
-  }
+// void Evaluations::Evaluate_RANSAC_GPUHC_Sols( \
+//     magmaComplex *h_GPU_HC_Track_Sols, \
+//     bool *h_is_GPU_HC_Sol_Converge, \
+//     bool *h_is_GPU_HC_Sol_Infinity )
+// {
+//   //> Loop over all RANSAC iterations
+//   for (int ri = 0; ri < NUM_OF_RANSAC_ITERATIONS; ri++) {
+//     Evaluate_GPUHC_Sols( h_GPU_HC_Track_Sols, h_is_GPU_HC_Sol_Converge, h_is_GPU_HC_Sol_Infinity, ri );
+//   }
 
-  Percentage_Of_Convergence = (float)Num_Of_Coverged_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
-  Percentage_Of_Inf_Sols    = (float)Num_Of_Inf_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
-  Percentage_Of_Real_Sols   = (float)Num_Of_Real_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
-}
+//   Percentage_Of_Convergence = (float)Num_Of_Coverged_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
+//   Percentage_Of_Inf_Sols    = (float)Num_Of_Inf_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
+//   Percentage_Of_Real_Sols   = (float)Num_Of_Real_Sols / (float)(num_of_tracks * NUM_OF_RANSAC_ITERATIONS);
+// }
 
 void Evaluations::Find_Unique_Sols( magmaComplex *h_GPU_HC_Track_Sols, bool *h_is_GPU_HC_Sol_Converge ) {
 
@@ -191,27 +209,13 @@ void Evaluations::Convert_Real_Sols_to_Rotation_Matrix( magmaFloatComplex *h_GPU
   Rot21[2] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[2]);
   MVG_Utility->Cayley_To_Rotation_Matrix( Rot21, Sol_Rotm_21 );
   // std::copy(Sol_Rotm_21, Sol_Rotm_21 + 9, begin(normalized_R21));
-  std::cout << "R2: " << std::endl;
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      std::cout << std::fixed << std::setprecision(6) << Sol_Rotm_21[i*3 + j] << "\t";
-    }
-    std::cout << std::endl;
-  }
-  
+
   //> \rot_{31}
   Rot31[0] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[3]);
   Rot31[1] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[4]);
   Rot31[2] = MAGMA_C_REAL(h_GPU_HC_Track_Sols[5]);
   MVG_Utility->Cayley_To_Rotation_Matrix( Rot31, Sol_Rotm_31 );
   // std::copy(Sol_Rotm_31, Sol_Rotm_31 + 9, begin(normalized_R31));
-  std::cout << "R3: " << std::endl;
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      std::cout << std::fixed << std::setprecision(6) << Sol_Rotm_31[i*3 + j] << "\t";
-    }
-    std::cout << std::endl;
-  }
 }
 
 Evaluations::~Evaluations() {
@@ -219,6 +223,8 @@ Evaluations::~Evaluations() {
   GPUHC_Track_Sols_File.close();
   GPUHC_Actual_Sols_Steps_File.close();
 
+  delete [] GT_R2;
+  delete [] GT_R3;
   delete [] Rot21;
   delete [] Rot31;
   delete [] Sol_Rotm_21;
